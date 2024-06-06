@@ -431,6 +431,7 @@ func (d *qemu) cpuType(bs *qemuBootState) (string, error) {
 	_, _, disableFlags := osinfo.GetOSQemuCompatibility(osType, distro, version)
 	cpuExtensions = append(cpuExtensions, disableFlags...)
 
+	cpuType = "max"
 	if len(cpuExtensions) > 0 {
 		cpuType += "," + strings.Join(cpuExtensions, ",")
 	}
