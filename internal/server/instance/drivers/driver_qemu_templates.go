@@ -89,7 +89,6 @@ func qemuBase(opts *qemuBaseOpts) []cfgSection {
 			{key: "type", value: machineType},
 			{key: "gic-version", value: gicVersion},
 			{key: "cap-large-decr", value: capLargeDecr},
-			{key: "accel", value: "kvm"},
 			{key: "usb", value: "off"},
 		},
 	}}
