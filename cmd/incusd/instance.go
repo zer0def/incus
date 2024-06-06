@@ -43,7 +43,7 @@ func instanceCreateAsEmpty(s *state.State, args db.InstanceArgs, op *operations.
 	defer reverter.Fail()
 
 	// Create the instance record.
-	inst, instOp, cleanup, err := instance.CreateInternal(s, args, op, true, true)
+	inst, instOp, cleanup, err := instance.CreateInternal(s, args, op, true, false)
 	if err != nil {
 		return nil, fmt.Errorf("Failed creating instance record: %w", err)
 	}
@@ -159,7 +159,7 @@ func instanceCreateFromImage(ctx context.Context, s *state.State, img *api.Image
 	args.BaseImage = img.Fingerprint
 
 	// Create the instance.
-	inst, instOp, cleanup, err := instance.CreateInternal(s, args, op, true, true)
+	inst, instOp, cleanup, err := instance.CreateInternal(s, args, op, true, false)
 	if err != nil {
 		return fmt.Errorf("Failed creating instance record: %w", err)
 	}
