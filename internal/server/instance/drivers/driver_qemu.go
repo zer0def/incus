@@ -1670,6 +1670,7 @@ func (d *qemu) start(stateful bool, op *operationlock.InstanceOperation) error {
 		cpuExtensions = append(cpuExtensions, "migratable=no", "+invtsc")
 	}
 
+	cpuType = "max"
 	if len(cpuExtensions) > 0 {
 		cpuType += "," + strings.Join(cpuExtensions, ",")
 	}
@@ -9547,11 +9548,6 @@ func (d *qemu) Info() instance.Info {
 		Error:    errors.New("Unknown error"),
 	}
 
-	if !util.PathExists("/dev/kvm") {
-		data.Error = errors.New("KVM support is missing (no /dev/kvm)")
-		return data
-	}
-
 	err := linux.LoadModule("vhost_vsock")
 	if err != nil {
 		data.Error = errors.New("vhost_vsock kernel module not loaded")
@@ -9620,14 +9616,6 @@ func (d *qemu) checkFeatures(hostArch int, qemuPath string) (map[string]any, err
 		"-chardev", fmt.Sprintf("socket,id=monitor,path=%s,server=on,wait=off", qemuEscapeCmdline(monitorPath.Name())),
 		"-mon", "chardev=monitor,mode=control",
 		"-machine", qemuMachineType(hostArch),
-	}
-
-	if hostArch == osarch.ARCH_64BIT_INTEL_X86 {
-		// On Intel, use KVM acceleration as it's needed for SEV detection.
-		// This also happens to be less resource intensive but can't
-		// trivially be performed on all architectures without extra care about the
-		// machine type.
-		qemuArgs = append(qemuArgs, "-accel", "kvm")
 	}
 
 	if d.architectureSupportsUEFI(hostArch) {
