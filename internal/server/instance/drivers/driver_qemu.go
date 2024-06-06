@@ -9260,9 +9260,7 @@ func (d *qemu) setCPUs(monitor *qmp.Monitor, count int) error {
 
 func (d *qemu) architectureSupportsCPUHotplug() bool {
 	// Check supported features.
-	info := DriverStatuses()[instancetype.VM].Info
-	_, found := info.Features["cpu_hotplug"]
-	return found
+	return false
 }
 
 func (d *qemu) postCPUHotplug(monitor *qmp.Monitor) error {
