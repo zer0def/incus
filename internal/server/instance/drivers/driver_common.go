@@ -961,11 +961,6 @@ func (d *common) validateStartup(stateful bool, statusCode api.StatusCode) error
 		return api.StatusErrorf(http.StatusServiceUnavailable, "Storage pool %q unavailable on this server", rootDiskConf["pool"])
 	}
 
-	// Validate architecture.
-	if !slices.Contains(d.state.OS.Architectures, d.architecture) {
-		return errors.New("Requested architecture isn't supported by this host")
-	}
-
 	// Check if instance is start protected.
 	if util.IsTrue(d.expandedConfig["security.protection.start"]) {
 		return errors.New("Instance has startup protection enabled")
