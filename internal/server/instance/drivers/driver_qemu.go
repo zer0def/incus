@@ -1908,7 +1908,7 @@ func (d *qemu) start(stateful bool, op *operationlock.InstanceOperation) error {
 	}
 
 	// SMBIOS only on x86_64 and aarch64.
-	if d.architectureSupportsUEFI(d.architecture) {
+	if d.architectureSupportsUEFI(d.architecture) && d.architecture != osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN {
 		qemuArgs = append(qemuArgs, "-smbios", "type=2,manufacturer=LinuxContainers,product=Incus")
 
 		// We'll pass the values through a file to avoid needlessly long
@@ -2577,7 +2577,13 @@ func (d *qemu) AgentCertificate() *x509.Certificate {
 }
 
 func (d *qemu) architectureSupportsUEFI(arch int) bool {
-	return slices.Contains([]int{osarch.ARCH_64BIT_INTEL_X86, osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN}, arch)
+	return slices.Contains([]int{
+		osarch.ARCH_64BIT_INTEL_X86,
+		osarch.ARCH_32BIT_INTEL_X86,
+		osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN,
+		osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN,
+		osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN,
+	}, arch)
 }
 
 // firmwarePairs returns the candidate firmware pairs for the instance based on its configuration.
@@ -2825,8 +2831,14 @@ func (d *qemu) qemuArchConfig(arch int) (string, string, error) {
 	case osarch.ARCH_64BIT_INTEL_X86:
 		qemuCmd = "qemu-system-x86_64"
 		bus = "pcie"
+	case osarch.ARCH_32BIT_INTEL_X86:
+		qemuCmd = "qemu-system-i386"
+		bus = "pcie"
 	case osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN:
 		qemuCmd = "qemu-system-aarch64"
+		bus = "pcie"
+	case osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN:
+		qemuCmd = "qemu-system-arm"
 		bus = "pcie"
 	case osarch.ARCH_64BIT_POWERPC_LITTLE_ENDIAN:
 		qemuCmd = "qemu-system-ppc64"
@@ -2834,6 +2846,9 @@ func (d *qemu) qemuArchConfig(arch int) (string, string, error) {
 	case osarch.ARCH_64BIT_S390_BIG_ENDIAN:
 		qemuCmd = "qemu-system-s390x"
 		bus = "ccw"
+	case osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN:
+		qemuCmd = "qemu-system-riscv64"
+		bus = "pcie"
 	default:
 		return "", "", errors.New("Architecture isn't supported for virtual machines")
 	}
