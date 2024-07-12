@@ -69,12 +69,18 @@ func qemuMachineType(architecture int) string {
 	switch architecture {
 	case osarch.ARCH_64BIT_INTEL_X86:
 		machineType = "q35"
+	case osarch.ARCH_32BIT_INTEL_X86:
+		machineType = "q35"
 	case osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN:
+		machineType = "virt"
+	case osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN:
 		machineType = "virt"
 	case osarch.ARCH_64BIT_POWERPC_LITTLE_ENDIAN:
 		machineType = "pseries"
 	case osarch.ARCH_64BIT_S390_BIG_ENDIAN:
 		machineType = "s390-ccw-virtio"
+	case osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN:
+		machineType = "virt"
 	}
 
 	return machineType
