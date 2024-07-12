@@ -37,7 +37,7 @@ const (
 
 var architectureInstallations = map[int][]Installation{
 	osarch.ARCH_64BIT_INTEL_X86: {{
-		Path: "/usr/share/OVMF",
+		Path: "/usr/share/edk2/x64",
 		Usage: map[FirmwareUsage][]FirmwarePair{
 			GENERIC: {
 				{Code: "OVMF_CODE_4M.secboot.fd", Vars: "OVMF_VARS_4M.fd"},
@@ -122,6 +122,38 @@ var architectureInstallations = map[int][]Installation{
 			},
 		},
 	}},
+	osarch.ARCH_32BIT_INTEL_X86: {{
+		Path: "/usr/share/edk2/ia32",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "OVMF_CODE.4MB.fd", Vars: "OVMF_VARS.4MB.fd"},
+				{Code: "OVMF_CODE_4M.fd", Vars: "OVMF_VARS_4M.fd"},
+				{Code: "OVMF_CODE.4m.fd", Vars: "OVMF_VARS.4m.fd"},
+				{Code: "OVMF_CODE.2MB.fd", Vars: "OVMF_VARS.2MB.fd"},
+				{Code: "OVMF_CODE.fd", Vars: "OVMF_VARS.fd"},
+				{Code: "OVMF_CODE.fd", Vars: "qemu.nvram"},
+			},
+			SECUREBOOT: {
+				{Code: "OVMF_CODE.4MB.fd", Vars: "OVMF_VARS.4MB.ms.fd"},
+				{Code: "OVMF_CODE_4M.ms.fd", Vars: "OVMF_VARS_4M.ms.fd"},
+				{Code: "OVMF_CODE_4M.secboot.fd", Vars: "OVMF_VARS_4M.secboot.fd"},
+				{Code: "OVMF_CODE.secboot.4m.fd", Vars: "OVMF_VARS.4m.fd"},
+				{Code: "OVMF_CODE.secboot.fd", Vars: "OVMF_VARS.secboot.fd"},
+				{Code: "OVMF_CODE.secboot.fd", Vars: "OVMF_VARS.fd"},
+				{Code: "OVMF_CODE.2MB.fd", Vars: "OVMF_VARS.2MB.ms.fd"},
+				{Code: "OVMF_CODE.fd", Vars: "OVMF_VARS.ms.fd"},
+				{Code: "OVMF_CODE.fd", Vars: "qemu.nvram"},
+			},
+			CSM: {
+				{Code: "seabios.bin", Vars: "seabios.bin"},
+				{Code: "OVMF_CODE.4MB.CSM.fd", Vars: "OVMF_VARS.4MB.CSM.fd"},
+				{Code: "OVMF_CODE.csm.4m.fd", Vars: "OVMF_VARS.4m.fd"},
+				{Code: "OVMF_CODE.2MB.CSM.fd", Vars: "OVMF_VARS.2MB.CSM.fd"},
+				{Code: "OVMF_CODE.CSM.fd", Vars: "OVMF_VARS.CSM.fd"},
+				{Code: "OVMF_CODE.csm.fd", Vars: "OVMF_VARS.fd"},
+			},
+		},
+	}},
 	osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN: {{
 		Path: "/usr/share/AAVMF",
 		Usage: map[FirmwareUsage][]FirmwarePair{
@@ -145,6 +177,44 @@ var architectureInstallations = map[int][]Installation{
 				{Code: "OVMF_CODE.2MB.fd", Vars: "OVMF_VARS.2MB.ms.fd"},
 				{Code: "OVMF_CODE.fd", Vars: "OVMF_VARS.ms.fd"},
 				{Code: "OVMF_CODE.fd", Vars: "qemu.nvram"},
+			},
+		},
+	}, {
+		Path: "/usr/share/edk2/aarch64",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "QEMU_CODE.fd", Vars: "QEMU_VARS.fd"},
+			},
+		},
+	}},
+	osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN: {{
+		Path: "/usr/share/AAVMF",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "AAVMF32_CODE.fd", Vars: "AAVMF32_VARS.fd"},
+			},
+		},
+	}, {
+		Path: "/usr/share/edk2/arm",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "QEMU_CODE.fd", Vars: "QEMU_VARS.fd"},
+			},
+		},
+	}},
+	osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN: {{
+		Path: "/usr/share/qemu-efi-riscv64",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "RISCV_VIRT_CODE.fd", Vars: "RISCV_VIRT_VARS.fd"},
+			},
+		},
+	}, {
+		Path: "/usr/share/edk2/riscv64",
+		Usage: map[FirmwareUsage][]FirmwarePair{
+			GENERIC: {
+				{Code: "QEMU_CODE.fd", Vars: "QEMU_VARS.fd"},
+				{Code: "RISCV_VIRT_CODE.fd", Vars: "RISCV_VIRT_VARS.fd"},
 			},
 		},
 	}},

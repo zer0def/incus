@@ -1644,7 +1644,7 @@ func (d *qemu) start(stateful bool, op *operationlock.InstanceOperation) error {
 	}
 
 	// SMBIOS only on x86_64 and aarch64.
-	if d.architectureSupportsUEFI(d.architecture) {
+	if d.architectureSupportsUEFI(d.architecture) && d.architecture != osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN {
 		qemuArgs = append(qemuArgs, "-smbios", "type=2,manufacturer=LinuxContainers,product=Incus")
 
 		for k, v := range d.expandedConfig {
@@ -2194,7 +2194,13 @@ func (d *qemu) AgentCertificate() *x509.Certificate {
 }
 
 func (d *qemu) architectureSupportsUEFI(arch int) bool {
-	return slices.Contains([]int{osarch.ARCH_64BIT_INTEL_X86, osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN}, arch)
+	return slices.Contains([]int{
+		osarch.ARCH_64BIT_INTEL_X86,
+		osarch.ARCH_32BIT_INTEL_X86,
+		osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN,
+		osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN,
+		osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN,
+	}, arch)
 }
 
 func (d *qemu) setupNvram() error {
@@ -2286,8 +2292,22 @@ func (d *qemu) qemuArchConfig(arch int) (string, string, error) {
 		}
 
 		return path, "pcie", nil
+	} else if arch == osarch.ARCH_32BIT_INTEL_X86 {
+		path, err := exec.LookPath("qemu-system-i386")
+		if err != nil {
+			return "", "", err
+		}
+
+		return path, "pcie", nil
 	} else if arch == osarch.ARCH_64BIT_ARMV8_LITTLE_ENDIAN {
 		path, err := exec.LookPath("qemu-system-aarch64")
+		if err != nil {
+			return "", "", err
+		}
+
+		return path, "pcie", nil
+	} else if arch == osarch.ARCH_32BIT_ARMV7_LITTLE_ENDIAN {
+		path, err := exec.LookPath("qemu-system-arm")
 		if err != nil {
 			return "", "", err
 		}
@@ -2307,6 +2327,13 @@ func (d *qemu) qemuArchConfig(arch int) (string, string, error) {
 		}
 
 		return path, "ccw", nil
+	} else if arch == osarch.ARCH_64BIT_RISCV_LITTLE_ENDIAN {
+		path, err := exec.LookPath("qemu-system-riscv64")
+		if err != nil {
+			return "", "", err
+		}
+
+		return path, "pcie", nil
 	}
 
 	return "", "", fmt.Errorf("Architecture isn't supported for virtual machines")
